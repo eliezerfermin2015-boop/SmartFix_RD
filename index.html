@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFix RD - Sistema Integral de Gestión</title>
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #28a745;
+            --dark-color: #212529;
+            --light-color: #f8f9fa;
+            --accent-color: #17a2b8;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e9ecef;
+            margin: 0;
+            padding: 20px;
+            color: var(--dark-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, var(--primary-color), #003570);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        header h1 { margin: 0; font-size: 28px; }
+        header p { margin: 5px 0 0 0; opacity: 0.9; font-size: 15px; }
+
+        /* DASHBOARD METRICS */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary-color);
+            text-align: center;
+        }
+        .metric-card.mano-obra { border-left-color: var(--accent-color); }
+        .metric-card.repuestos { border-left-color: var(--warning-color); }
+        .metric-card.ganancias { border-left-color: var(--secondary-color); }
+
+        .metric-title { font-size: 13px; text-transform: uppercase; color: #6c757d; font-weight: bold; }
+        .metric-value { font-size: 22px; font-weight: bold; margin: 10px 0 0 0; color: #111; }
+
+        /* SISTEMA DE PESTAÑAS (TABS) */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            background: #dee2e6;
+            padding: 5px 5px 0 5px;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .tab-btn {
+            background-color: #e2e6ea;
+            color: #495057;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover { background-color: #dae0e5; }
+        .tab-btn.active {
+            background-color: white;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 25px;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .tab-content.active { display: block; }
+
+        .card-inner {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            margin-bottom: 25px;
+        }
+
+        h2 { margin-top: 0; color: var(--primary-color); font-size: 20px; margin-bottom: 15px; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        label { font-weight: 600; margin-bottom: 5px; font-size: 13px; color: #495057; }
+        input, select, textarea {
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: white;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0,86,179,0.15);
+        }
+
+        .search-container {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        .search-input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #ced4da; }
+
+        button {
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            transition: background 0.2s ease;
+        }
+
+        .btn-success { background-color: var(--secondary-color); }
+        .btn-success:hover { background-color: #218838; }
+        .btn-info { background-color: var(--accent-color); }
+        .btn-info:hover { background-color: #138496; }
+        .btn-danger { background-color: var(--danger-color); padding: 5px 10px; font-size: 12px; }
+        .btn-danger:hover { background-color: #c82333; }
+
+        .table-responsive { overflow-x: auto; margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #dee2e6; font-size: 14px; }
+        th { background-color: #f1f3f5; color: #495057; font-weight: 600; }
+        tr:hover { background-color: #f8f9fa; }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-recibido { background-color: #ffeeba; color: #856404; }
+        .status-reparacion { background-color: #cce5ff; color: #004085; }
+        .status-listo { background-color: #d4edda; color: #155724; }
+
+        .price-text { font-family: monospace; font-weight: bold; color: #212529; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>SmartFix RD 🇩🇴</h1>
+        <p>Panel Avanzado de Gestión de Taller e Inventario Financiero</p>
+    </header>
+
+    <!-- DASHBOARD INDICADORES -->
+    <div class="dashboard-grid">
+        <div class="metric-card mano-obra">
+            <div class="metric-title">Mano de Obra Bruta</div>
+            <div id="m-mano-obra" class="metric-value">RD$ 0.00</div>
+        </div>
+        <div class="metric-card repuestos">
+            <div class="metric-title">Inversión en Repuestos</div>
+            <div id="m-repuestos" class="metric-value">RD$ 0.00</div>
+        </div>
+        <div class="metric-card ganancias">
+            <div class="metric-title">Ganancia Neta Estimada</div>
+            <div id="m-ganancias" class="metric-value">RD$ 0.00</div>
+        </div>
+    </div>
+
+    <!-- BOTONES DE NAVEGACIÓN -->
+    <div class="tabs">
+        <button id="btn-reparaciones" class="tab-btn active" onclick="switchTab('reparaciones')">🔧 Ordenes de Reparación</button>
+        <button id="btn-inventario" class="tab-btn" onclick="switchTab('inventario')">📦 Inventario de Piezas</button>
+        <button id="btn-clientes" class="tab-btn" onclick="switchTab('clientes')">👥 Base de Clientes</button>
+    </div>
+
+    <!-- PESTAÑA 1: REPARACIONES -->
+    <div id="reparaciones" class="tab-content active">
+        <div class="card-inner">
+            <h2>Registrar Entrada de Equipo & Cotización</h2>
+            <form id="orderForm">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="orderClientSelect">Asignar Cliente</label>
+                        <select id="orderClientSelect" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="deviceBrand">Marca</label>
+                        <select id="deviceBrand" required>
+                            <option value="">Seleccione...</option>
+                            <option value="Samsung">Samsung</option>
+                            <option value="Apple">Apple (iPhone)</option>
+                            <option value="Xiaomi">Xiaomi</option>
+                            <option value="Motorola">Motorola</option>
+                            <option value="Otra">Otra</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="deviceModel">Modelo Exacto</label>
+                        <input type="text" id="deviceModel" required placeholder="Ej. Galaxy S21 Ultra">
+                    </div>
+                    <div class="form-group">
+                        <label for="deviceImei">IMEI (15 dígitos)</label>
+                        <input type="text" id="deviceImei" maxlength="15" placeholder="Seguridad / Control">
+                    </div>
+                    <div class="form-group">
+                        <label for="partSelect">Asignar Pieza de Repuesto</label>
+                        <select id="partSelect">
+                            <!-- Se llena dinámicamente desde inventario -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="laborCost">Costo Mano de Obra (RD$)</label>
+                        <input type="number" id="laborCost" required min="0" placeholder="Ej. 1500">
+                    </div>
+                    <div class="form-group">
+                        <label for="repairStatus">Estado Falla</label>
+                        <select id="repairStatus">
+                            <option value="recibido">Recibido (Diagnóstico)</option>
+                            <option value="reparacion">En Reparación</option>
+                            <option value="listo">Listo (Entregar)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="problemDescription">Detalle de la Falla Reportada</label>
+                    <textarea id="problemDescription" rows="2" required placeholder="Describe el daño del teléfono..."></textarea>
+                </div>
+                <button type="submit" class="btn-success">Guardar y Procesar Órden Financiera</button>
+            </form>
+        </div>
+
+        <h2>Listado General de Órdenes</h2>
+        <div class="search-container">
+            <input type="text" id="searchOrder" class="search-input" placeholder="🔍 Buscar por cliente, modelo o IMEI..." oninput="filterOrders()">
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Dispositivo</th>
+                        <th>IMEI</th>
+                        <th>Repuesto Utilizado</th>
+                        <th>Costo Total</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- PESTAÑA 2: INVENTARIO -->
+    <div id="inventario" class="tab-content">
+        <div class="card-inner">
+            <h2>Agregar Repuesto a Almacén</h2>
+            <form id="inventoryForm">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="partName">Nombre del Repuesto</label>
+                        <input type="text" id="partName" required placeholder="Ej. Pantalla S21 Ultra Original">
+                    </div>
+                    <div class="form-group">
+                        <label for="partCost">Costo de Adquisición (RD$)</label>
+                        <input type="number" id="partCost" required min="0" placeholder="Ej. 4500">
+                    </div>
+                    <div class="form-group">
+                        <label for="partQty">Cantidad Inicial en Stock</label>
+                        <input type="number" id="partQty" required min="1" placeholder="Ej. 5">
+                    </div>
+                </div>
+                <button type="submit" class="btn-info">Registrar en Inventario</button>
+            </form>
+        </div>
+
+        <h2>Stock de Repuestos en Taller</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre de la Pieza</th>
+                        <th>Costo Unitario</th>
+                        <th>Cantidad Disponible</th>
+                        <th>Estatus Stock</th>
+                    </tr>
+                </thead>
+                <tbody id="inventoryTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- PESTAÑA 3: CLIENTES -->
+    <div id="clientes" class="tab-content">
+        <div class="card-inner">
+            <h2>Añadir Cliente Único</h2>
+            <form id="clientForm">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="clientName">Nombre y Apellidos</label>
+                        <input type="text" id="clientName" required placeholder="Ej. Pedro Martínez">
+                    </div>
+                    <div class="form-group">
+                        <label for="clientPhone">Número de Teléfono</label>
+                        <input type="tel" id="clientPhone" required placeholder="Ej. 809-555-0000">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="clientAddress">Ubicación / Sector</label>
+                    <input type="text" id="clientAddress" placeholder="Ej. Ensanche Luperón, DN">
+                </div>
+                <button type="submit" class="btn-info">Guardar Cliente</button>
+            </form>
+        </div>
+
+        <h2>Directorio Telefónico y de Clientes</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID Único</th>
+                        <th>Nombre del Cliente</th>
+                        <th>Contacto</th>
+                        <th>Dirección</th>
+                    </tr>
+                </thead>
+                <tbody id="clientsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
