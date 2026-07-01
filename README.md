@@ -20,4 +20,4 @@ Facilitar la administración de clientes, inventario y órdenes de reparación m
 3. Ejecute `index.html` en su navegador.
 
 ## Autor
-Edwin Jiménez
+Eliezer Fermin Gonzalez
